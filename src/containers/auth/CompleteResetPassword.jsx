@@ -1,7 +1,7 @@
+import CustomTextField from "@/components/custom-text-field";
 import { Button, Typography, Box, Link as MuiLink } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import CustomTextField from "./CustomTextField";
 
 const resetPasswordValidationSchema = Yup.object({
   otp: Yup.string()
@@ -141,7 +141,7 @@ const CompleteResetPasswordForm = ({ email, onBackToSignIn, onResendOTP }) => {
             color="secondary"
             onClick={onResendOTP}
           >
-            Didn't receive code? Resend OTP
+            Didnt receive code? Resend OTP
           </MuiLink>
         </Box>
       </Box>

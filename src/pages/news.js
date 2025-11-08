@@ -11,6 +11,7 @@ const News = () => {
     if (!isAuthenticated) {
       router.push("/");
     }
+    console.log(isAuthenticated, "aaaaaaaaaaaaaaa");
   }, [isAuthenticated, router]);
   return isAuthenticated && <div>HIIIIIIIIIIIIIIIIIIII {user.name}</div>;
 };

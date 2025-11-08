@@ -54,26 +54,6 @@ const CustomTextField = ({
         ) : null,
       }}
       {...otherProps}
-      sx={{
-        "& .MuiOutlinedInput-root": {
-          fontSize: "13px",
-          height: "40px", // Fixed height
-        },
-        "& fieldset": {
-          borderRadius: "2px", // Reduced from default 8px to 4px
-          border: "3px solid #ced4da", // Custom border color
-        },
-
-        "& .MuiInputLabel-root": {
-          fontSize: "13px",
-          transform: "translate(14px, 9px) scale(1)", // Adjust label position
-        },
-        "& .MuiInputLabel-shrink": {
-          transform: "translate(14px, -9px) scale(0.75)",
-        },
-        marginBottom: "8px", // Reduced spacing between fields
-        ...otherProps.sx,
-      }}
     />
   );
 };

@@ -1,7 +1,7 @@
 import { Button, Typography, Box } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import CustomTextField from "./CustomTextField";
+import CustomTextField from "@/components/custom-text-field";
 
 const forgotPasswordValidationSchema = Yup.object({
   email: Yup.string()
@@ -37,7 +37,7 @@ const ResetPasswordForm = ({ onBackToSignIn, onSendOTP }) => {
         color="text.secondary"
         sx={{ mb: 3, textAlign: "center" }}
       >
-        Enter your email address and we'll send you a link to reset your
+        Enter your email address and well send you a link to reset your
         password.
       </Typography>
 
