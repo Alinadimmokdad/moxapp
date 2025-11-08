@@ -41,7 +41,7 @@ const SignInForm = ({ onForgotPassword }) => {
             // No need to redirect here - the auth context will handle it
           } else {
             console.log("Login failed: Invalid credentials");
-            setLoginError("Invalid email or password");
+            setLoginError("Invalid email or passwordssssssssssssssssss");
           }
         }
       });
@@ -49,41 +49,36 @@ const SignInForm = ({ onForgotPassword }) => {
   });
 
   return (
-    <Grid container>
-      <Grid
-        item
-        sx={{
-          mb: 4, // Add margin bottom
-        }}
-      >
-        <Image src="/images/mainlogo.jpg" height={72} width={80} alt="logo" />
-      </Grid>
-      <Grid item size={12}>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ mb: 3 }}
-          align="left"
+    <form onSubmit={formik.handleSubmit} noValidate style={{ width: "100%" }}>
+      <Grid container>
+        <Grid
+          item
+          sx={{
+            mb: 4, // Add margin bottom
+          }}
         >
-          Welcome back! Please sign in to your account.
-        </Typography>
-      </Grid>
+          <Image src="/images/mainlogo.jpg" height={72} width={80} alt="logo" />
+        </Grid>
+        <Grid item size={12}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mb: 3 }}
+            align="left"
+          >
+            Welcome back! Please sign in to your account.
+          </Typography>
+        </Grid>
 
-      <Grid item size={12}>
-        {loginError && (
-          <Alert severity="error" sx={{ width: "100%", mb: 2 }}>
-            {loginError}
-          </Alert>
-        )}
-      </Grid>
+        <Grid item size={12}>
+          {loginError && (
+            <Alert severity="error" sx={{ width: "100%", mb: 2 }}>
+              {loginError}
+            </Alert>
+          )}
+        </Grid>
 
-      <Grid item size={12}>
-        <Box
-          component="form"
-          onSubmit={formik.handleSubmit}
-          noValidate
-          sx={{ mt: 1, width: "100%" }}
-        >
+        <Grid item size={12}>
           <Grid container spacing={1}>
             <Grid item size={12}>
               <CustomTextField
@@ -158,9 +153,9 @@ const SignInForm = ({ onForgotPassword }) => {
               </Box>
             </Grid>
           </Grid>
-        </Box>
+        </Grid>
       </Grid>
-    </Grid>
+    </form>
   );
 };
 

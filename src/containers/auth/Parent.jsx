@@ -24,12 +24,10 @@ export default function Parent() {
     setShowForgotPassword(false);
     setShowResetPassword(true);
     console.log("OTP sent to:", email);
-    alert(`OTP sent to ${email}! (Check console)`);
   };
 
   const handleResendOTP = () => {
     console.log("Resending OTP to:", userEmail);
-    alert(`OTP resent to ${userEmail}! (Check console)`);
   };
 
   return (

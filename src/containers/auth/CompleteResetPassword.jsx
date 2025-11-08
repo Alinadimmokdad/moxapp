@@ -38,7 +38,6 @@ const CompleteResetPasswordForm = ({ email, onBackToSignIn, onResendOTP }) => {
             otp: values.otp,
             newPassword: values.newPassword,
           });
-          alert("Password reset successfully!");
           onBackToSignIn?.();
         }
       });
