@@ -1,31 +1,21 @@
-// Predefined list of users
-export const users = [
-  {
-    email: "alimokdad961@gmail.com",
-    password: "Ali1234",
-    name: "Ali Mokdad",
-  },
-  {
-    email: "test@example.com",
-    password: "Test1234",
-    name: "Test User",
-  },
-  {
-    email: "admin@example.com",
-    password: "Admin1234",
-    name: "Admin User",
-  },
-];
+import { API_BASE_URL } from "@/services/api";
 
-// Function to authenticate user
-export const authenticateUser = (email, password) => {
-  const user = users.find(
-    (user) => user.email === email && user.password === password
-  );
-  return user || null;
-};
+export const authenticateUser = async (email, password) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/login/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-// Function to check if user exists (for signup)
-export const userExists = (email) => {
-  return users.some((user) => user.email === email);
+    if (!response.ok) {
+      return null;
+    }
+
+    const user = await response.json();
+    return user; // successful login
+  } catch (error) {
+    console.error("Authentication failed:", error);
+    return null;
+  }
 };

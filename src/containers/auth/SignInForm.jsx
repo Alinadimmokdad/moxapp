@@ -1,3 +1,4 @@
+// components/SignInForm.js
 import {
   Button,
   Typography,
@@ -21,6 +22,7 @@ const signInValidationSchema = Yup.object({
 const SignInForm = ({ onForgotPassword }) => {
   const { login } = useAuth();
   const [loginError, setLoginError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -29,22 +31,32 @@ const SignInForm = ({ onForgotPassword }) => {
     },
     validationSchema: signInValidationSchema,
     validateOnMount: false,
-    onSubmit: (values) => {
-      formik.validateForm().then(() => {
-        if (formik.isValid) {
-          // Use auth context to login
-          const success = login(values.email, values.password);
+    onSubmit: async (values) => {
+      setIsSubmitting(true);
+      setLoginError("");
 
-          if (success) {
-            console.log("Login successful");
-            setLoginError("");
-            // No need to redirect here - the auth context will handle it
-          } else {
-            console.log("Login failed: Invalid credentials");
-            setLoginError("Invalid email or passwordssssssssssssssssss");
+      try {
+        formik.validateForm().then(async () => {
+          if (formik.isValid) {
+            // Use auth context to login - now it's async
+            const success = await login(values.email, values.password);
+
+            if (success) {
+              console.log("Login successful");
+              setLoginError("");
+              // No need to redirect here - the auth context will handle it
+            } else {
+              console.log("Login failed: Invalid credentials");
+              setLoginError("Invalid email or password");
+            }
           }
-        }
-      });
+        });
+      } catch (error) {
+        console.error("Login error:", error);
+        setLoginError("Login failed. Please try again.");
+      } finally {
+        setIsSubmitting(false);
+      }
     },
   });
 
@@ -54,7 +66,7 @@ const SignInForm = ({ onForgotPassword }) => {
         <Grid
           item
           sx={{
-            mb: 4, // Add margin bottom
+            mb: 4,
           }}
         >
           <Image src="/images/mainlogo.jpg" height={72} width={80} alt="logo" />
@@ -92,8 +104,8 @@ const SignInForm = ({ onForgotPassword }) => {
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.email && Boolean(formik.errors.email)} // Updated this line
-                helperText={formik.touched.email && formik.errors.email} // Updated this line
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
 
@@ -110,8 +122,8 @@ const SignInForm = ({ onForgotPassword }) => {
                 onBlur={formik.handleBlur}
                 error={
                   formik.touched.password && Boolean(formik.errors.password)
-                } // Updated this line
-                helperText={formik.touched.password && formik.errors.password} // Updated this line
+                }
+                helperText={formik.touched.password && formik.errors.password}
               />
             </Grid>
 
@@ -122,8 +134,9 @@ const SignInForm = ({ onForgotPassword }) => {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
                 size="large"
+                disabled={isSubmitting}
               >
-                Sign In
+                {isSubmitting ? "Signing In..." : "Sign In"}
               </Button>
             </Grid>
 

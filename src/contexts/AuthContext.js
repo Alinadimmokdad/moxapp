@@ -1,3 +1,4 @@
+// contexts/AuthContext.js
 import { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { authenticateUser } from "@/utils/auth";
@@ -26,19 +27,26 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = (email, password) => {
-    const user = authenticateUser(email, password);
-    if (user) {
-      setUser(user);
-      localStorage.setItem("user", JSON.stringify(user));
-      router.push("/home"); // Auto redirect after login
-      return true;
+  const login = async (email, password) => {
+    try {
+      const user = await authenticateUser(email, password);
+      if (user) {
+        setUser(user);
+        localStorage.setItem("user", JSON.stringify(user));
+        router.push("/home"); // Auto redirect after login
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Login error:", error);
+      return false;
     }
-    return false;
   };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("token"); // Remove token if you're using it
     router.push("/");
   };
 
