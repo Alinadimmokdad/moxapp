@@ -1,7 +1,6 @@
-// contexts/AuthContext.js
 import { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { authenticateUser } from "@/utils/auth";
+import { userAPI } from "@/services/api";
 
 const AuthContext = createContext();
 
@@ -15,38 +14,59 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // true initially
   const router = useRouter();
 
+  // Restore session from localStorage
   useEffect(() => {
-    // Check if user is logged in on app start (from localStorage)
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
-    setLoading(false);
+    setLoading(false); // ✅ Always set loading false at the end
   }, []);
 
+  // 🚀 LOGIN using Node backend
   const login = async (email, password) => {
     try {
-      const user = await authenticateUser(email, password);
-      if (user) {
+      setLoading(true);
+      // ✅ this is where you paste it
+      const response = await userAPI.login(email, password);
+
+      // check if response is ok
+      if (!response.ok) {
+        const errorData = response.data; // get the error message from backend
+        console.error("Login failed:", errorData.message);
+        return false;
+      }
+
+      // parse JSON data from backend
+      const data = response.data;
+
+      if (data.token) {
+        // store minimal user info
+        const user = { email };
         setUser(user);
         localStorage.setItem("user", JSON.stringify(user));
-        router.push("/home"); // Auto redirect after login
+        localStorage.setItem("token", data.token);
+
+        router.push("/home"); // redirect after login
         return true;
       }
+
       return false;
     } catch (error) {
       console.error("Login error:", error);
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
-    localStorage.removeItem("token"); // Remove token if you're using it
+    localStorage.removeItem("token");
     router.push("/");
   };
 

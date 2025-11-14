@@ -1,5 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { orderAPI } from "@/services/api";
+import { orderAPI, userAPI } from "@/services/api";
 import {
   Container,
   Typography,
@@ -24,10 +24,11 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const router = useRouter();
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, loading: authLoading } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
+  const [users, setUsers] = useState([]);
   const [editingOrder, setEditingOrder] = useState(null);
   const [formData, setFormData] = useState({
     zone: "",
@@ -38,25 +39,40 @@ export default function Home() {
   });
 
   // Fetch orders
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      const data = await orderAPI.getOrders();
-      setOrders(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchOrders = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const data = await orderAPI.getOrders();
+  //     setOrders(data);
+  //   } catch (err) {
+  //     console.error(err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  //fetch users
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await userAPI.getUsers();
+        if (response.ok) {
+          setUsers(response.data);
+        } else {
+          console.error("Failed to fetch users:", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !authLoading) {
       router.push("/");
       return;
     }
-    fetchOrders();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, authLoading, router]);
 
   const handleLogout = () => {
     logout();
@@ -140,7 +156,7 @@ export default function Home() {
       {/* Table */}
       <Table>
         <TableHead>
-          <TableRow>
+          {/* <TableRow>
             <TableCell>ID</TableCell>
             <TableCell>Zone</TableCell>
             <TableCell>Shipper</TableCell>
@@ -149,35 +165,35 @@ export default function Home() {
             <TableCell>Delivery Charge</TableCell>
             <TableCell>Created At</TableCell>
             <TableCell>Actions</TableCell>
-          </TableRow>
+          </TableRow> */}
         </TableHead>
         <TableBody>
-          {orders.map((order) => (
-            <TableRow key={order.id}>
-              <TableCell>{order.id}</TableCell>
-              <TableCell>{order.zone}</TableCell>
-              <TableCell>{order.shipper}</TableCell>
+          {users.map((order) => (
+            <TableRow key={order._id}>
+              <TableCell>{order._id}</TableCell>
+              <TableCell>{order.email}</TableCell>
+              {/* <TableCell>{order.shipper}</TableCell>
               <TableCell>{order.driver}</TableCell>
               <TableCell>{order.price}</TableCell>
-              <TableCell>{order.delivery_charge}</TableCell>
-              <TableCell>
+              <TableCell>{order.delivery_charge}</TableCell> */}
+              {/* <TableCell>
                 {new Date(order.created_at).toLocaleString()}
-              </TableCell>
-              <TableCell>
+              </TableCell> */}
+              {/* <TableCell>
                 <IconButton onClick={() => handleOpenDialog(order)}>
                   <Edit />
                 </IconButton>
                 <IconButton onClick={() => handleDelete(order.id)}>
                   <Delete color="error" />
                 </IconButton>
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
       {/* Dialog for Add/Edit */}
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
+      {/* <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>{editingOrder ? "Edit Order" : "Add Order"}</DialogTitle>
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}
@@ -226,7 +242,7 @@ export default function Home() {
             {editingOrder ? "Update" : "Add"}
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </Container>
   );
 }

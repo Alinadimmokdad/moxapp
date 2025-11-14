@@ -46,8 +46,7 @@ const SignInForm = ({ onForgotPassword }) => {
               setLoginError("");
               // No need to redirect here - the auth context will handle it
             } else {
-              console.log("Login failed: Invalid credentials");
-              setLoginError("Invalid email or password");
+              setLoginError("Invalid email or password"); // optional: use data.message from API if you want
             }
           }
         });
