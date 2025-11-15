@@ -22,25 +22,46 @@ const resetPasswordValidationSchema = Yup.object({
 
 const CompleteResetPasswordForm = ({ email, onBackToSignIn, onResendOTP }) => {
   const formik = useFormik({
-    initialValues: {
-      otp: "",
-      newPassword: "",
-      confirmPassword: "",
-    },
+    initialValues: { otp: "", newPassword: "", confirmPassword: "" },
     validationSchema: resetPasswordValidationSchema,
-    validateOnBlur: false,
-    validateOnMount: false,
-    onSubmit: (values) => {
-      formik.validateForm().then(() => {
-        if (formik.isValid) {
-          console.log("Password reset completed:", {
-            email: email,
-            otp: values.otp,
-            newPassword: values.newPassword,
-          });
-          onBackToSignIn?.();
+    onSubmit: async (values) => {
+      try {
+        // Verify OTP first
+        const verifyRes = await fetch(
+          "http://localhost:5000/api/auth/verify-otp",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, otp: values.otp }),
+          }
+        );
+        const verifyData = await verifyRes.json();
+
+        if (!verifyRes.ok) {
+          formik.setErrors({ otp: verifyData.message || "Invalid OTP" });
+          return;
         }
-      });
+
+        // Reset password
+        const resetRes = await fetch(
+          "http://localhost:5000/api/auth/reset-password",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, newPassword: values.newPassword }),
+          }
+        );
+        const resetData = await resetRes.json();
+
+        if (resetRes.ok) {
+          console.log(resetData.message);
+          onBackToSignIn?.();
+        } else {
+          console.error("Failed to reset password:", resetData.message);
+        }
+      } catch (err) {
+        console.error("Error resetting password:", err);
+      }
     },
   });
 

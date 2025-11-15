@@ -9,24 +9,50 @@ const forgotPasswordValidationSchema = Yup.object({
     .required("Email is required"),
 });
 
-const ResetPasswordForm = ({ onBackToSignIn, onSendOTP }) => {
+const SendResetLinkForm = ({ onBackToSignIn, onSendOTP }) => {
   const formik = useFormik({
-    initialValues: {
-      email: "",
-    },
+    initialValues: { email: "" },
     validationSchema: forgotPasswordValidationSchema,
-    validateOnBlur: false, // Disable validation on blur
-    validateOnMount: false, // Disable validation on mount
-    onSubmit: (values) => {
-      formik.validateForm().then(() => {
-        if (formik.isValid) {
-          console.log("Sending OTP to:", values.email);
-          onSendOTP?.(values.email); // This triggers the OTP flow
+    onSubmit: async (values) => {
+      try {
+        // Check if email exists
+        const checkRes = await fetch(
+          "http://localhost:5000/api/auth/check-email",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: values.email }),
+          }
+        );
+        const checkData = await checkRes.json();
+
+        if (!checkData.exists) {
+          formik.setErrors({ email: "This email does not exist" });
+          return;
         }
-      });
+
+        // Send OTP
+        const otpRes = await fetch(
+          "http://localhost:5000/api/auth/forgot-password",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: values.email }),
+          }
+        );
+        const otpData = await otpRes.json();
+
+        if (otpRes.ok) {
+          onSendOTP?.(values.email);
+          console.log(otpData.message);
+        } else {
+          console.error("Failed to send OTP:", otpData.message);
+        }
+      } catch (err) {
+        console.error("Error sending OTP:", err);
+      }
     },
   });
-
   return (
     <>
       <Typography component="h1" variant="h4" gutterBottom color="primary">
@@ -85,4 +111,4 @@ const ResetPasswordForm = ({ onBackToSignIn, onSendOTP }) => {
   );
 };
 
-export default ResetPasswordForm;
+export default SendResetLinkForm;

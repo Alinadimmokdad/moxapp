@@ -1,6 +1,6 @@
 import { Container, Paper, Box } from "@mui/material";
 import { useState } from "react";
-import ResetPasswordForm from "./ResetPassWord";
+import SendResetLinkForm from "./SendResetLinkForm";
 import CompleteResetPasswordForm from "./CompleteResetPassword";
 import SignInForm from "./SignInForm";
 
@@ -59,7 +59,7 @@ export default function Parent() {
             onResendOTP={handleResendOTP}
           />
         ) : showForgotPassword ? (
-          <ResetPasswordForm
+          <SendResetLinkForm
             onBackToSignIn={handleBackToSignIn}
             onSendOTP={handleSendOTP}
           />
