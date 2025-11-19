@@ -38,6 +38,10 @@ export const userAPI = {
       method: "POST",
       body: JSON.stringify({ email }),
     }),
+  deleteUser: (id) =>
+    apiCall(`/auth/users/${id}`, {
+      method: "DELETE",
+    }),
 };
 
 // Orders API (if you have order routes)
