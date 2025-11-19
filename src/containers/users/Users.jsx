@@ -6,6 +6,7 @@ import TableCustom from "@/components/tables/TableCustom";
 import Sidebar from "@/components/sidebar/SideBar";
 import AddUserWindow from "./AddUserWindow";
 import { useRouter } from "next/router";
+import MainLayout from "@/components/layouts/MainLayout";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -36,7 +37,7 @@ export default function Users() {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <Sidebar />
+      {/* <Sidebar /> */}
 
       <Container maxWidth="lg" sx={{ mt: 4 }}>
         <TableCustom
@@ -62,3 +63,7 @@ export default function Users() {
     </Box>
   );
 }
+
+Users.getLayout = function getLayout(page) {
+  return <MainLayout>{page}</MainLayout>;
+};
