@@ -30,11 +30,13 @@ export default function Home() {
         console.error(err);
       }
     };
+    console.log("Fetching users...");
     fetchUsers();
   }, []);
 
   useEffect(() => {
     if (!isAuthenticated && !authLoading) router.push("/");
+    console.log(isAuthenticated, "aaaaaaaaaaaaaaa");
   }, [isAuthenticated, authLoading]);
 
   if (!isAuthenticated) return null;

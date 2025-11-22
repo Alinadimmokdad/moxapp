@@ -53,3 +53,13 @@ export const orderAPI = {
     apiCall(`/orders/${id}`, { method: "PUT", body: JSON.stringify(order) }),
   deleteOrder: (id) => apiCall(`/orders/${id}`, { method: "DELETE" }),
 };
+
+export const zoneAPI = {
+  getZones: () => apiCall("/zones"), // GET all zones
+  getZone: (id) => apiCall(`/zones/${id}`), // GET zone by id
+  createZone: (zone) =>
+    apiCall("/zones", { method: "POST", body: JSON.stringify(zone) }),
+  updateZone: (id, zone) =>
+    apiCall(`/zones/${id}`, { method: "PUT", body: JSON.stringify(zone) }),
+  deleteZone: (id) => apiCall(`/zones/${id}`, { method: "DELETE" }),
+};

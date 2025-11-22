@@ -1,30 +1,19 @@
-import { Box, Container } from "@mui/material";
+import { Box } from "@mui/material";
 import Sidebar from "@/components/sidebar/SideBar";
 
 export default function MainLayout({ children }) {
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", width: "100%" }}>
       <Sidebar />
-      <Container maxWidth="lg" sx={{ mt: 4, ml: "240px" }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 1,
+        }}
+      >
         {children}
-      </Container>
+      </Box>
     </Box>
   );
 }
-
-// import { Box, Container } from "@mui/material";
-// import Sidebar from "@/components/sidebar/SideBar";
-
-// export default function MainLayout({ children }) {
-//   return (
-//     <Box sx={{ display: "flex" }}>
-//       {/* Sidebar */}
-//       <Sidebar />
-
-//       {/* Main content */}
-//       <Container maxWidth="lg" sx={{ mt: 4, ml: "240px" }}>
-//         {children}
-//       </Container>
-//     </Box>
-//   );
-// }

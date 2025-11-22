@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
       setUser(JSON.parse(savedUser));
     }
     setLoading(false); // ✅ Always set loading false at the end
+    console.log("AuthProvider mounted");
   }, []);
 
   // 🚀 LOGIN using Node backend
@@ -80,3 +81,5 @@ export const AuthProvider = ({ children }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+//use jwt token

@@ -1,28 +1,25 @@
 import { useEffect, useState } from "react";
 import { Box, Container } from "@mui/material";
-import { userAPI } from "@/services/api";
+import { orderAPI, userAPI } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import TableCustom from "@/components/tables/TableCustom";
-import Sidebar from "@/components/sidebar/SideBar";
-import AddUserWindow from "./AddUserWindow";
 import { useRouter } from "next/router";
 import MainLayout from "@/components/layouts/MainLayout";
 
-export default function Users() {
-  const [users, setUsers] = useState([]);
+export default function Orders() {
+  const [orders, setOrders] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
   const router = useRouter();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
 
-  const fetchUsers = async () => {
-    const res = await userAPI.getUsers();
-    if (res.ok) setUsers(res.data);
-  };
+  //   const fetchOrders = async () => {
+  //     const res = await userAPI.getOrders();
+  //     if (res.ok) setOrders(res.data);
+  //   };
 
-  useEffect(() => {
-    fetchUsers();
-    console.log("Fetching users...");
-  }, []);
+  //   useEffect(() => {
+  //     fetchOrders();
+  //   }, []);
 
   useEffect(() => {
     if (!isAuthenticated && !authLoading) router.push("/");
@@ -32,8 +29,8 @@ export default function Users() {
   if (!isAuthenticated) return null;
 
   const handleDelete = async (row) => {
-    const res = await userAPI.deleteUser(row._id);
-    if (res.ok) fetchUsers();
+    const res = await orderAPI.deleteOrder(row._id);
+    if (res.ok) console.log("fetchOrders()");
     else alert(res.data.message);
   };
 
@@ -42,28 +39,28 @@ export default function Users() {
       <Container maxWidth="lg" sx={{ mt: 4 }}>
         <TableCustom
           editable={false}
-          title="Users"
+          title="Orders"
           columns={[
             { field: "_id", headerName: "ID" },
             { field: "email", headerName: "Email" },
           ]}
-          rows={users}
+          rows={orders}
           onAdd={() => setOpenAdd(true)}
           onDelete={handleDelete}
         />
       </Container>
 
       {/* Add User Popup */}
-      <AddUserWindow
+      {/* <AddUserWindow
         open={openAdd}
         onClose={() => setOpenAdd(false)}
-        onSuccess={fetchUsers}
+        onSuccess={fetchOrders}
         userAPI={userAPI}
-      />
+      /> */}
     </Box>
   );
 }
 
-Users.getLayout = function getLayout(page) {
+Orders.getLayout = function getLayout(page) {
   return <MainLayout>{page}</MainLayout>;
 };

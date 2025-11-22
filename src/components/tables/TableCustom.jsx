@@ -10,6 +10,7 @@ import {
   Box,
   Typography,
   Button,
+  Checkbox,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import { useState } from "react";
@@ -40,11 +41,10 @@ export default function TableCustom({
   };
 
   return (
-    <Box>
+    <Box width={"100%"}>
       {/* Header */}
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
         <Typography variant="h5">{title}</Typography>
-
         {onAdd && (
           <Button variant="contained" onClick={onAdd}>
             Add
@@ -53,17 +53,28 @@ export default function TableCustom({
       </Box>
 
       {/* Table */}
-      <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
-        <Table>
+      <TableContainer
+        component={Paper}
+        sx={{
+          width: "100%", // full width of its parent
+        }}
+      >
+        <Table sx={{ minWidth: "100%" }} size="large">
           <TableHead>
             <TableRow>
               {columns.map((col) => (
-                <TableCell key={col.field} sx={{ fontWeight: "bold" }}>
+                <TableCell
+                  key={col.field}
+                  sx={{ fontWeight: "bold", fontSize: "1.1rem", py: 2 }}
+                >
                   {col.headerName}
                 </TableCell>
               ))}
-
-              {(onEdit || onDelete) && <TableCell>Actions</TableCell>}
+              {(onEdit || onDelete) && (
+                <TableCell sx={{ fontSize: "1.1rem", py: 2 }}>
+                  Actions
+                </TableCell>
+              )}
             </TableRow>
           </TableHead>
 
@@ -72,7 +83,7 @@ export default function TableCustom({
               <TableRow>
                 <TableCell
                   colSpan={columns.length + 1}
-                  sx={{ textAlign: "center", py: 3 }}
+                  sx={{ textAlign: "center", py: 5, fontSize: "1.1rem" }}
                 >
                   Loading...
                 </TableCell>
@@ -81,19 +92,26 @@ export default function TableCustom({
 
             {!loading &&
               rows.map((row) => (
-                <TableRow key={row._id}>
+                <TableRow key={row._id} sx={{ py: 3 }}>
                   {columns.map((col) => (
-                    <TableCell key={col.field}>{row[col.field]}</TableCell>
+                    <TableCell key={col.field} sx={{ fontSize: "1rem", py: 2 }}>
+                      {col.renderCell ? (
+                        col.renderCell(row)
+                      ) : col.type === "checkbox" ? (
+                        <Checkbox checked={row[col.field]} disabled />
+                      ) : (
+                        row[col.field]
+                      )}
+                    </TableCell>
                   ))}
 
                   {(onEdit || onDelete) && (
-                    <TableCell>
+                    <TableCell sx={{ py: 2 }}>
                       {onEdit && editable && (
                         <IconButton onClick={() => onEdit(row)}>
                           <Edit />
                         </IconButton>
                       )}
-
                       {onDelete && (
                         <IconButton
                           onClick={() => handleDeleteClick(row)}
@@ -111,7 +129,12 @@ export default function TableCustom({
               <TableRow>
                 <TableCell
                   colSpan={columns.length + 1}
-                  sx={{ textAlign: "center", py: 3, color: "gray" }}
+                  sx={{
+                    textAlign: "center",
+                    py: 5,
+                    color: "gray",
+                    fontSize: "1rem",
+                  }}
                 >
                   No data available
                 </TableCell>
