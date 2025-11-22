@@ -38,20 +38,18 @@ export default function Users() {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <TableCustom
-          editable={false}
-          title="Users"
-          columns={[
-            { field: "_id", headerName: "ID" },
-            { field: "email", headerName: "Email" },
-          ]}
-          rows={users}
-          onAdd={() => setOpenAdd(true)}
-          onDelete={handleDelete}
-        />
-      </Container>
+    <Box sx={{ display: "flex" }} p={1}>
+      <TableCustom
+        editable={false}
+        title="Users"
+        columns={[
+          { field: "_id", headerName: "ID" },
+          { field: "email", headerName: "Email" },
+        ]}
+        rows={users}
+        onAdd={() => setOpenAdd(true)}
+        onDelete={handleDelete}
+      />
 
       {/* Add User Popup */}
       <AddUserWindow
