@@ -22,6 +22,11 @@ const apiCall = async (endpoint, options = {}) => {
 // User API functions
 export const userAPI = {
   getUsers: () => apiCall("/auth/users"), // GET all users
+  searchUsers: ({ searchBy, searchTerm }) =>
+    apiCall("/auth/users/search", {
+      method: "POST",
+      body: JSON.stringify({ searchBy, searchTerm }),
+    }),
   login: (email, password) =>
     apiCall("/auth/login", {
       method: "POST",

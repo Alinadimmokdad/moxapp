@@ -2,6 +2,7 @@ import {
   Drawer,
   List,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
   Toolbar,
   Box,
@@ -15,14 +16,22 @@ import {
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  Inventory2,
+  Cancel,
+  LocalShipping,
+  Map,
+  LocalShippingOutlined,
+  People,
+} from "@mui/icons-material";
 
 const menuItems = [
-  { label: "Orders", path: "/orders" },
-  { label: "Canceled Orders", path: "/orders/canceled" },
-  { label: "Drivers", path: "/drivers" },
-  { label: "Zones", path: "/zones" },
-  { label: "Shippers", path: "/shippers" },
-  { label: "Users", path: "/users" },
+  { label: "Orders", path: "/orders", icon: <Inventory2 /> },
+  { label: "Canceled Orders", path: "/orders/canceled", icon: <Cancel /> },
+  { label: "Drivers", path: "/drivers", icon: <LocalShipping /> },
+  { label: "Zones", path: "/zones", icon: <Map /> },
+  { label: "Shippers", path: "/shippers", icon: <LocalShippingOutlined /> },
+  { label: "Users", path: "/users", icon: <People /> },
 ];
 
 export default function Sidebar() {
@@ -42,72 +51,75 @@ export default function Sidebar() {
       <Drawer
         variant="permanent"
         sx={{
-          width: 220,
+          width: 240,
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
-            width: 220,
+            width: 240,
             boxSizing: "border-box",
-            backgroundColor: "#0f172a",
-            color: "white",
-            p: 2,
+            bgcolor: "#0b2742de", // keep the dark sidebar color
+            color: "white", // white text
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
+            borderRadius: 0,
+            borderColor: "divider",
           },
         }}
       >
         <Box>
-          <Toolbar />
-          <Box sx={{ mt: 2 }}>
-            <Typography
-              sx={{ px: 2, mb: 2, fontWeight: "bold", color: "#94a3b8" }}
-            >
+          <Toolbar>
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
               Dashboard
             </Typography>
+          </Toolbar>
 
-            <List>
-              {menuItems.map((item) => (
-                <ListItemButton
-                  key={item.label}
-                  onClick={() => router.push(item.path)}
-                  sx={{
-                    borderRadius: 2,
-                    mx: 1,
-                    mb: 1,
-                    "&.Mui-selected": {
-                      backgroundColor: "#1e293b",
-                    },
-                    "&:hover": {
-                      backgroundColor: "#1e293b",
-                    },
-                  }}
-                  selected={router.pathname === item.path}
-                >
-                  <ListItemText primary={item.label} />
-                </ListItemButton>
-              ))}
-            </List>
-          </Box>
+          <List sx={{ mt: 2 }}>
+            {menuItems.map((item) => (
+              <ListItemButton
+                key={item.label}
+                onClick={() => router.push(item.path)}
+                sx={{
+                  borderRadius: 2,
+                  mx: 1,
+                  mb: 1,
+                  color: "white", // default text color
+                  "&.Mui-selected": {
+                    bgcolor: "#1e293b",
+                    color: "#ffffffff",
+                    "& svg": { color: "#f3f3f3ff" },
+                  },
+                  "&:hover": {
+                    bgcolor: "#1e293b",
+                    "& svg": { color: "#4f46e5" },
+                  },
+                }}
+                selected={router.pathname === item.path}
+              >
+                <ListItemIcon sx={{ color: "white" }}>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            ))}
+          </List>
         </Box>
 
-        {/* Logout button at bottom */}
-        <Box sx={{ px: 2, mt: "auto", mb: 3 }}>
-          {" "}
-          {/* mt: "auto" pushes it up, mb: margin bottom */}
+        {/* Logout button */}
+        <Box sx={{ px: 2, mb: 6 }}>
           <Button
-            variant="text"
+            variant="outlined"
             fullWidth
             onClick={handleLogoutClick}
             sx={{
-              color: "white",
+              color: "white", // make text white
+              borderColor: "white", // white border
               fontWeight: "bold",
-              justifyContent: "flex-start",
               textTransform: "none",
-              border: "1px solid white", // adds border
-              borderRadius: 1, // optional rounded corners
-              py: 1, // padding top/bottom
+              borderRadius: 1,
+              py: 1,
+              display: "flex",
+              justifyContent: "flex-start",
+              gap: 1,
               "&:hover": {
-                backgroundColor: "rgba(255,255,255,0.1)", // subtle hover effect
+                bgcolor: "rgba(255,255,255,0.1)", // subtle hover effect
               },
             }}
           >

@@ -5,15 +5,22 @@ import Sidebar from "@/components/sidebar/SideBar";
 import ZoneFormModal from "./ZoneFormModal";
 import { zoneAPI } from "@/services/api";
 import MainLayout from "@/components/layouts/MainLayout";
+import { useLoading } from "@/contexts/LoadingContext";
 
 export default function Zones() {
   const [zones, setZones] = useState([]);
   const [openForm, setOpenForm] = useState(false);
   const [selectedZone, setSelectedZone] = useState(null);
+  const { loading, setLoading } = useLoading();
 
   const fetchZones = async () => {
-    const res = await zoneAPI.getZones();
-    if (res.ok) setZones(res.data);
+    try {
+      setLoading(true);
+      const res = await zoneAPI.getZones();
+      if (res.ok) setZones(res.data);
+    } finally {
+      setLoading(false); // always stop loading
+    }
   };
 
   useEffect(() => {
@@ -73,6 +80,7 @@ export default function Zones() {
           },
         ]}
         rows={zones}
+        loading={loading}
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}

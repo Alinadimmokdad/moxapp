@@ -40,10 +40,7 @@ export default function Orders() {
         <TableCustom
           editable={false}
           title="Orders"
-          columns={[
-            { field: "_id", headerName: "ID" },
-            { field: "email", headerName: "Email" },
-          ]}
+          columns={[{ field: "_id", headerName: "ID" }]}
           rows={orders}
           onAdd={() => setOpenAdd(true)}
           onDelete={handleDelete}

@@ -7,26 +7,45 @@ import Sidebar from "@/components/sidebar/SideBar";
 import AddUserWindow from "./AddUserWindow";
 import { useRouter } from "next/router";
 import MainLayout from "@/components/layouts/MainLayout";
+import { useLoading } from "@/contexts/LoadingContext";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
   const router = useRouter();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { loading, setLoading } = useLoading();
+  const [allUsers, setAllUsers] = useState([]);
 
   const fetchUsers = async () => {
-    const res = await userAPI.getUsers();
-    if (res.ok) setUsers(res.data);
+    try {
+      setLoading(true);
+      const res = await userAPI.getUsers();
+      if (res.ok) setUsers(res.data);
+      setAllUsers(res.data);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const handleSearch = async (field, value) => {
+    if (value.trim() === "") {
+      setUsers(allUsers);
+      return;
+    }
+
+    const res = await userAPI.searchUsers({
+      searchBy: field,
+      searchTerm: value,
+    });
+    if (res.ok) setUsers(res.data);
+  };
   useEffect(() => {
     fetchUsers();
-    console.log("Fetching users...");
   }, []);
 
   useEffect(() => {
     if (!isAuthenticated && !authLoading) router.push("/");
-    console.log(isAuthenticated, "aaaaaaaaaaaaaaa");
   }, [isAuthenticated, authLoading]);
 
   if (!isAuthenticated) return null;
@@ -49,6 +68,9 @@ export default function Users() {
         rows={users}
         onAdd={() => setOpenAdd(true)}
         onDelete={handleDelete}
+        loading={loading}
+        onSearch={handleSearch} // passes field and value to backend
+        searchFields={["email"]} // select field to search by
       />
 
       {/* Add User Popup */}
