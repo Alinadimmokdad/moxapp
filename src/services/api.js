@@ -68,3 +68,19 @@ export const zoneAPI = {
     apiCall(`/zones/${id}`, { method: "PUT", body: JSON.stringify(zone) }),
   deleteZone: (id) => apiCall(`/zones/${id}`, { method: "DELETE" }),
 };
+
+export const shipperAPI = {
+  getShippers: (page = 1, limit = 15) =>
+    apiCall(`/shippers?page=${page}&limit=${limit}`),
+  getShipper: (id) => apiCall(`/shippers/${id}`),
+  createShipper: (data) =>
+    apiCall("/shippers", { method: "POST", body: JSON.stringify(data) }),
+  updateShipper: (id, data) =>
+    apiCall(`/shippers/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  deleteShipper: (id) => apiCall(`/shippers/${id}`, { method: "DELETE" }),
+  searchShippers: ({ searchBy, searchTerm }) =>
+    apiCall("/shippers/search", {
+      method: "POST",
+      body: JSON.stringify({ searchBy, searchTerm }),
+    }),
+};

@@ -16,6 +16,8 @@ import {
   Select,
   FormControl,
   InputLabel,
+  TableFooter,
+  TablePagination,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import { useState } from "react";
@@ -32,6 +34,10 @@ export default function TableCustom({
   onSearch = null,
   searchFields = [],
   loading = false,
+  paginationNeeded = false,
+  page = 1,
+  totalPages = 1,
+  onPageChange = null,
 }) {
   const [openConfirm, setOpenConfirm] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -52,13 +58,17 @@ export default function TableCustom({
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    if (onSearch && searchBy) onSearch(searchBy, value);
+    if (onSearch && searchBy) onSearch(searchBy, value, 1); // reset to first page
   };
 
   const handleSearchByChange = (e) => {
     const value = e.target.value;
     setSearchBy(value);
-    if (onSearch) onSearch(value, searchTerm);
+    if (onSearch) onSearch(value, searchTerm, 1);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    if (onPageChange) onPageChange(newPage + 1); // MUI pagination is 0-based
   };
 
   return (
@@ -139,14 +149,11 @@ export default function TableCustom({
         <Table sx={{ minWidth: "100%" }} size="medium">
           <TableHead>
             <TableRow sx={{ height: 3.8 }}>
-              {" "}
-              {/* very compact header */}
               {columns.map((col) => (
                 <TableCell
                   key={col.field}
                   sx={{
                     fontSize: "0.95rem",
-
                     fontWeight: "bold",
                     py: 1.3,
                     px: 1.2,
@@ -241,6 +248,21 @@ export default function TableCustom({
                 </TableRow>
               ))}
           </TableBody>
+
+          {paginationNeeded && (
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  count={totalPages * 15} // total items
+                  page={page - 1} // zero-based
+                  onPageChange={handleChangePage}
+                  rowsPerPage={15}
+                  rowsPerPageOptions={[]} // fixed 15
+                  component="div"
+                />
+              </TableRow>
+            </TableFooter>
+          )}
         </Table>
       </TableContainer>
 

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Box, Container } from "@mui/material";
 import TableCustom from "@/components/tables/TableCustom";
-import Sidebar from "@/components/sidebar/SideBar";
 import ZoneFormModal from "./ZoneFormModal";
 import { zoneAPI } from "@/services/api";
 import MainLayout from "@/components/layouts/MainLayout";
