@@ -1,5 +1,6 @@
 import { LoadingProvider } from "@/contexts/LoadingContext";
 import { AuthProvider } from "../contexts/AuthContext";
+import { SearchProvider } from "@/contexts/SearchContext";
 import MUIThemeProvider from "@/providers/ThemeProvider";
 import ProtectedRoute from "@/components/protectedRoutes/ProtectedRoute";
 
@@ -13,15 +14,18 @@ export default function MyApp({ Component, pageProps, router }) {
   return (
     <AuthProvider>
       <LoadingProvider>
-        <MUIThemeProvider>
-          {isPublic ? (
-            getLayout(<Component {...pageProps} />)
-          ) : (
-            <ProtectedRoute>
-              {getLayout(<Component {...pageProps} />)}
-            </ProtectedRoute>
-          )}
-        </MUIThemeProvider>
+        <SearchProvider>
+          {" "}
+          <MUIThemeProvider>
+            {isPublic ? (
+              getLayout(<Component {...pageProps} />)
+            ) : (
+              <ProtectedRoute>
+                {getLayout(<Component {...pageProps} />)}
+              </ProtectedRoute>
+            )}
+          </MUIThemeProvider>
+        </SearchProvider>
       </LoadingProvider>
     </AuthProvider>
   );

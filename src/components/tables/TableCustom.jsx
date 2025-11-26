@@ -12,10 +12,6 @@ import {
   Button,
   CircularProgress,
   TextField,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
   TableFooter,
   TablePagination,
 } from "@mui/material";
@@ -42,7 +38,6 @@ export default function TableCustom({
   const [openConfirm, setOpenConfirm] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchBy, setSearchBy] = useState(searchFields[0] || "");
 
   const handleDeleteClick = (row) => {
     setSelectedRow(row);
@@ -58,17 +53,15 @@ export default function TableCustom({
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    if (onSearch && searchBy) onSearch(searchBy, value, 1); // reset to first page
-  };
 
-  const handleSearchByChange = (e) => {
-    const value = e.target.value;
-    setSearchBy(value);
-    if (onSearch) onSearch(value, searchTerm, 1);
+    if (onSearch && searchFields.length > 0) {
+      // Search across all search fields automatically
+      onSearch("all", value, 1); // "all" indicates search across all fields
+    }
   };
 
   const handleChangePage = (event, newPage) => {
-    if (onPageChange) onPageChange(newPage + 1); // MUI pagination is 0-based
+    if (onPageChange) onPageChange(newPage + 1);
   };
 
   return (
@@ -98,33 +91,16 @@ export default function TableCustom({
           </Typography>
 
           {onSearch && searchFields.length > 0 && (
-            <>
-              <FormControl size="small" sx={{ minWidth: 130 }}>
-                <InputLabel>Search By</InputLabel>
-                <Select
-                  value={searchBy}
-                  onChange={handleSearchByChange}
-                  label="Search By"
-                >
-                  {searchFields.map((field) => (
-                    <MenuItem key={field} value={field}>
-                      {field}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <TextField
-                size="small"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                sx={{
-                  minWidth: 200,
-                  "& .MuiOutlinedInput-root": { borderRadius: 2 },
-                }}
-              />
-            </>
+            <TextField
+              size="small"
+              placeholder={`Search ...`}
+              value={searchTerm}
+              onChange={handleSearchChange}
+              sx={{
+                minWidth: 200,
+                "& .MuiOutlinedInput-root": { borderRadius: 2 },
+              }}
+            />
           )}
         </Box>
 
@@ -253,11 +229,11 @@ export default function TableCustom({
             <TableFooter>
               <TableRow>
                 <TablePagination
-                  count={totalPages * 15} // total items
-                  page={page - 1} // zero-based
+                  count={totalPages * 15}
+                  page={page - 1}
                   onPageChange={handleChangePage}
                   rowsPerPage={15}
-                  rowsPerPageOptions={[]} // fixed 15
+                  rowsPerPageOptions={[]}
                   component="div"
                 />
               </TableRow>
