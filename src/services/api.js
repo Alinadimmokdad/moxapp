@@ -84,3 +84,33 @@ export const shipperAPI = {
       body: JSON.stringify({ searchBy, searchTerm }),
     }),
 };
+
+export const driverAPI = {
+  getDrivers: (page = 1, limit = 15) =>
+    apiCall(`/drivers?page=${page}&limit=${limit}`),
+
+  getDriver: (id) => apiCall(`/drivers/${id}`),
+
+  createDriver: (data) =>
+    apiCall("/drivers", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  updateDriver: (id, data) =>
+    apiCall(`/drivers/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  deleteDriver: (id) =>
+    apiCall(`/drivers/${id}`, {
+      method: "DELETE",
+    }),
+
+  searchDrivers: ({ searchBy, searchTerm }) =>
+    apiCall("/drivers/search", {
+      method: "POST",
+      body: JSON.stringify({ searchBy, searchTerm }),
+    }),
+};

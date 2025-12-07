@@ -122,7 +122,7 @@ export const SearchProvider = ({ children }) => {
     searchControllerRef,
     resetSearch,
     cancelPreviousSearch,
-    executeSearch, // ✅ Now this contains the actual search logic
+    executeSearch,
   };
 
   return (

@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import TableCustom from "@/components/tables/TableCustom";
-import { shipperAPI, zoneAPI } from "@/services/api";
+import { driverAPI, zoneAPI } from "@/services/api";
 import MainLayout from "@/components/layouts/MainLayout";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useSearch } from "@/contexts/SearchContext";
-import ShipperFormModal from "./ShippersFormModal";
+import DriverFormModal from "./DriverFormModal";
 import { enqueueSnackbar } from "notistack";
 
-export default function Shippers() {
-  const [shippers, setShippers] = useState([]);
+export default function Drivers() {
+  const [drivers, setDrivers] = useState([]);
   const [zones, setZones] = useState([]);
   const [openForm, setOpenForm] = useState(false);
-  const [selectedShipper, setSelectedShipper] = useState(null);
+  const [selectedDriver, setSelectedDriver] = useState(null);
   const { loading, setLoading } = useLoading();
 
   const { isSearching, searchTerm, searchBy, executeSearch } = useSearch();
@@ -25,41 +25,42 @@ export default function Shippers() {
     if (res.ok) setZones(res.data);
   };
 
-  const fetchShippers = async (pageNumber = 1) => {
+  const fetchDrivers = async (pageNumber = 1) => {
     try {
-      setLoading(true); // ✅ Set loading at start
-      const res = await shipperAPI.getShippers(pageNumber, 15);
+      setLoading(true);
+      const res = await driverAPI.getDrivers(pageNumber, 15);
       if (res.ok) {
-        setShippers(res.data.data);
+        setDrivers(res.data.data);
         setCurrentPage(res.data.page);
         setTotalPages(res.data.totalPages);
       }
     } catch (error) {
-      console.error("Failed to fetch shippers:", error);
-      setShippers([]); // ✅ Clear shippers on error
+      console.error("Failed to fetch drivers:", error);
+      setDrivers([]);
+      enqueueSnackbar("Failed to load drivers", { variant: "error" });
     } finally {
-      setLoading(false); // ✅ Always clear loading
+      setLoading(false);
     }
   };
 
   const handlePageChange = (newPage) => {
     if (!isSearching) {
-      fetchShippers(newPage);
+      fetchDrivers(newPage);
     }
   };
 
   const handleSearch = async (field, value) => {
     executeSearch({
-      searchAPI: shipperAPI.searchShippers,
-      normalFetchAPI: shipperAPI.getShippers,
+      searchAPI: driverAPI.searchDrivers,
+      normalFetchAPI: driverAPI.getDrivers,
       searchParams: { field, value },
       onSearchResults: (data) => {
-        setShippers(data);
+        setDrivers(data);
         setCurrentPage(1);
         setTotalPages(1);
       },
       onNormalResults: (data) => {
-        setShippers(data.data);
+        setDrivers(data.data);
         setCurrentPage(data.page);
         setTotalPages(data.totalPages);
       },
@@ -68,46 +69,42 @@ export default function Shippers() {
   };
 
   const handleAdd = () => {
-    setSelectedShipper(null);
+    setSelectedDriver(null);
     setOpenForm(true);
   };
 
-  const handleEdit = async (shipper) => {
+  const handleEdit = async (driver) => {
     try {
-      const res = await shipperAPI.getShipper(shipper._id);
+      const res = await driverAPI.getDriver(driver._id);
       if (res.ok) {
         const data = res.data;
         data.zone = data.zone?._id || "";
-        setSelectedShipper(data);
+        setSelectedDriver(data);
         setOpenForm(true);
       } else {
-        enqueueSnackbar("Failed to fetch shipper details", {
-          variant: "error",
-        });
+        enqueueSnackbar("Failed to fetch driver details", { variant: "error" });
       }
     } catch (error) {
-      enqueueSnackbar("Error fetching shipper details", { variant: "error" });
+      enqueueSnackbar("Error fetching driver details", { variant: "error" });
     }
   };
 
-  const handleDelete = async (shipper) => {
+  const handleDelete = async (driver) => {
     try {
       setLoading(true);
-      const res = await shipperAPI.deleteShipper(shipper._id);
+      const res = await driverAPI.deleteDriver(driver._id);
       if (res.ok) {
-        enqueueSnackbar("Shipper deleted successfully!", {
-          variant: "success",
-        }); // ✅ Success toast
+        enqueueSnackbar("Driver deleted successfully!", { variant: "success" });
         if (isSearching && searchTerm) {
           handleSearch(searchBy, searchTerm);
         } else {
-          fetchShippers(currentPage);
+          fetchDrivers(currentPage);
         }
       } else {
-        enqueueSnackbar(res.data.message, { variant: "error" }); // ✅ Error toast
+        enqueueSnackbar(res.data.message, { variant: "error" });
       }
     } catch (error) {
-      enqueueSnackbar("Error deleting shipper", { variant: "error" }); // ✅ Toast
+      enqueueSnackbar("Error deleting driver", { variant: "error" });
     } finally {
       setLoading(false);
     }
@@ -117,15 +114,14 @@ export default function Shippers() {
     try {
       setLoading(true);
       const res = values._id
-        ? await shipperAPI.updateShipper(values._id, values)
-        : await shipperAPI.createShipper(values);
+        ? await driverAPI.updateDriver(values._id, values)
+        : await driverAPI.createDriver(values);
 
       if (res.ok) {
-        // ✅ Success toast
         enqueueSnackbar(
           values._id
-            ? "Shipper updated successfully!"
-            : "Shipper created successfully!",
+            ? "Driver updated successfully!"
+            : "Driver created successfully!",
           { variant: "success" }
         );
 
@@ -133,64 +129,74 @@ export default function Shippers() {
         if (isSearching && searchTerm) {
           handleSearch(searchBy, searchTerm);
         } else {
-          fetchShippers(currentPage);
+          fetchDrivers(currentPage);
         }
       } else {
-        enqueueSnackbar(res.data.message || "Failed to save shipper", {
+        enqueueSnackbar(res.data.message || "Failed to save driver", {
           variant: "error",
-        }); // ✅ Error toast
+        });
       }
     } catch (error) {
-      enqueueSnackbar("Error saving shipper", { variant: "error" }); // ✅ Toast
+      enqueueSnackbar("Error saving driver", { variant: "error" });
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchZones();
-    fetchShippers();
+    fetchDrivers();
   }, []);
 
   return (
     <Box sx={{ display: "flex" }} p={1}>
       <TableCustom
-        title="Shippers"
+        title="Drivers"
         editable
         columns={[
-          { field: "name", headerName: "Name" },
-          { field: "pageName", headerName: "Page Name" },
-          { field: "phoneNumber", headerName: "Phone Number" },
-          { field: "address", headerName: "Address" },
+          { field: "name", headerName: "First Name" },
+          { field: "lastName", headerName: "Last Name" },
+          { field: "phone", headerName: "Phone Number" },
+          { field: "nationality", headerName: "Nationality" },
+          { field: "idNumber", headerName: "ID Number" },
           {
             field: "zone",
             headerName: "Zone",
             renderCell: (row) => row.zone?.name || "-",
           },
+          {
+            field: "isAvailable",
+            headerName: "Status",
+            renderCell: (row) =>
+              row.isAvailable ? "Available" : "Not Available",
+          },
         ]}
-        rows={shippers}
+        rows={drivers}
         loading={loading}
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}
         onSearch={handleSearch}
-        searchFields={["name", "pageName", "phoneNumber"]}
+        searchFields={["name", "lastName", "phone", "nationality", "idNumber"]}
         paginationNeeded={!isSearching}
         page={isSearching ? 1 : currentPage}
         totalPages={isSearching ? 1 : totalPages}
         onPageChange={handlePageChange}
       />
 
-      <ShipperFormModal
+      <DriverFormModal
         open={openForm}
         onClose={() => setOpenForm(false)}
         zones={zones}
         initialValues={
-          selectedShipper || {
+          selectedDriver || {
             name: "",
-            pageName: "",
-            phoneNumber: "",
-            address: "",
+            lastName: "",
+            phone: "",
+            nationality: "",
+            idNumber: "",
             zone: "",
+            isAvailable: true,
           }
         }
         onSubmit={handleFormSubmit}
@@ -199,4 +205,4 @@ export default function Shippers() {
   );
 }
 
-Shippers.getLayout = (page) => <MainLayout>{page}</MainLayout>;
+Drivers.getLayout = (page) => <MainLayout>{page}</MainLayout>;
